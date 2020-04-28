@@ -9,8 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>kafka-basics</artifactId>
-
+    <artifactId>kafka-consumer-elasticsearch</artifactId>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
@@ -26,6 +25,13 @@
             <version>1.7.25</version>
             <!--<scope>test</scope>-->
         </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>6.4.0</version>
+        </dependency>
     </dependencies>
+
 
 </project>
