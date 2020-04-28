@@ -17,8 +17,6 @@ public class Main {
 
         Properties config = loadConfig(logger);
 
-        System.out.println(config.getProperty("app.twitter.accessToken"));
-
         // Create Twitter client
         List<String> terms = Lists.newArrayList("corona", "virus", "trump");
         TwitterClient twitterClient = new TwitterClient(config, terms);

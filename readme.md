@@ -9,6 +9,7 @@ So far only the the project only produces the tweets.
 ## Requirements
 - Java 8
 - Twitter API Credentials (if you don't have any you can apply here https://developer.twitter.com/en)
+- Elasticsearch
 
 ## Setting up Kafka (for mac)
 - Download one of the Kafka binaries from https://kafka.apache.org/downloads
@@ -25,6 +26,11 @@ So far only the the project only produces the tweets.
 
 NOTE: If you did not install kafka with brew `zookeeper-server-start`, `kafka-server-start` and any other Kafka commands need a `.sh` at the end. 
 
+## Setting up Elasticsearch
+- You can start up a free hosted Elasticsearch cluster here https://bonsai.io/
+- Click 'Sign Up` and follow the instructions.
+- You will need to manually add the `twitter` index to the cluster before running the consumer.
+
 ## Running the Kafka Producer
-- Run Kafka producer by running the the Main in the `tutorial2` package.
+- Run Kafka producer by running the the Main in the `tutorial2` package in the `kafka-producer-twitter` module.
 - If you want to change the search terms for the tweets being polled change the value for the `terms` variable.
