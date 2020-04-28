@@ -100,8 +100,4 @@ public class KafkaProducer {
         producer.close();
     }
 
-
-    public static void main(String[] args) {
-
-    }
 }
