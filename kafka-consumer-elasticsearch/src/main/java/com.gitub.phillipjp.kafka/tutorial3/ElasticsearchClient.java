@@ -1,5 +1,6 @@
 package com.gitub.phillipjp.kafka.tutorial3;
 
+import com.google.gson.JsonParser;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -24,6 +25,8 @@ public class ElasticsearchClient {
 
     Logger logger = LoggerFactory.getLogger(ElasticsearchClient.class.getName());
 
+    private static JsonParser jsonParser= new JsonParser();
+
     RestHighLevelClient client;
 
     public ElasticsearchClient(Properties config){
@@ -47,17 +50,40 @@ public class ElasticsearchClient {
 
     public void addDocToIndex(String doc){
 
-        IndexRequest indexRequest = new IndexRequest("twitter", "tweets")
-                .source(doc, XContentType.JSON);
+        String tweetId = getTweetId(doc);
+
+        // only get the text so elasticsearch doesn't fill up too quickly
+        String tweetText = "{ \"text\": " + jsonParser.parse(doc).getAsJsonObject().get("text").toString()  + "}";
+
+        IndexRequest indexRequest = new IndexRequest("twitter", "tweets",  tweetId)
+                .source(tweetText, XContentType.JSON);
 
         try {
             IndexResponse indexResponse = client.index(indexRequest, RequestOptions.DEFAULT);
-            logger.info("Added " + indexResponse.getId() + " to index");
+            logger.info("Added " + tweetId + " to index");
+            logger.info(indexResponse.getId());
 
         } catch (IOException e) {
             logger.error("Failed to add doc\n" + doc + "\nto index", e);
         }
 
+    }
+
+    public IndexRequest makeIndexRequest(String doc, String tweetId){
+
+        // only get the text so elasticsearch doesn't fill up too quickly
+        String tweetText = "{ \"text\": " + jsonParser.parse(doc).getAsJsonObject().get("text").toString()  + "}";
+
+        return new IndexRequest("twitter", "tweets",  tweetId)
+                .source(tweetText, XContentType.JSON);
+    }
+
+    public String getTweetId(String tweetJson){
+
+        return jsonParser.parse(tweetJson)
+                .getAsJsonObject()
+                .get("id_str")
+                .getAsString();
     }
 
     public void closeClient(){

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
 
 public class Main {
 
@@ -16,9 +17,42 @@ public class Main {
 
         ElasticsearchClient esClient = new ElasticsearchClient(config);
 
-        String doc = "{ \"foo\": \"bar\"}";
+        // latch for dealing with multiple threads
+        CountDownLatch latch = new CountDownLatch(1);
 
-        esClient.addDocToIndex(doc);
+        // create consumer
+        logger.info("Creating the consumer thread");
+        KafkaConsumer kafkaConsumer = new KafkaConsumer(config, latch, config.getProperty("app.kafka.topic"));
+
+        // create runnable consumer
+        Runnable consumerRunnable = new ConsumerRunnable(kafkaConsumer, esClient);
+
+
+        // start thread
+        Thread myThread = new Thread(consumerRunnable);
+        myThread.start();
+
+        // add a shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            logger.info("Caught shutdown hook");
+            ((ConsumerRunnable) consumerRunnable).shutdown();
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            logger.info("Application has exited");
+        }
+        ));
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            logger.error("Application got interrupted", e);
+        }finally {
+            logger.info("Application is closing");
+        }
 
         esClient.closeClient();
 

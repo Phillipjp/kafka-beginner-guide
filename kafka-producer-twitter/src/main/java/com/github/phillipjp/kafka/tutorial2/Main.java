@@ -18,14 +18,14 @@ public class Main {
         Properties config = loadConfig(logger);
 
         // Create Twitter client
-        List<String> terms = Lists.newArrayList("corona", "virus", "trump");
+        List<String> terms = Lists.newArrayList("corona");
         TwitterClient twitterClient = new TwitterClient(config, terms);
 
         // Create Kafka Producer
         KafkaProducer producer = new KafkaProducer(config);
 
         // Send tweets via Producer
-        producer.run(twitterClient, "twitter_topic");
+        producer.run(twitterClient, config.getProperty("app.kafka.topic"));
 
 
         logger.info("End of application");

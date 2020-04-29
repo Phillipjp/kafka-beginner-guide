@@ -94,7 +94,7 @@ public class ConsumerDemoWithThreads {
 
         @Override
         public void run() {
-// poll for new data
+            // poll for new data
             try {
                 while (true) {
                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
