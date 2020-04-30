@@ -1,5 +1,6 @@
 package com.gitub.phillipjp.kafka.tutorial3;
 
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -71,11 +72,16 @@ public class ElasticsearchClient {
 
     public IndexRequest makeIndexRequest(String doc, String tweetId){
 
-        // only get the text so elasticsearch doesn't fill up too quickly
-        String tweetText = "{ \"text\": " + jsonParser.parse(doc).getAsJsonObject().get("text").toString()  + "}";
+        // only get the the required fields so elasticsearch doesn't fill up too quickly
+//        JsonObject tweetData = jsonParser.parse(doc).getAsJsonObject();
+//        JsonObject user = tweetData.get("user").getAsJsonObject();
+//        String tweetText = "{ \"text\": " + tweetData.get("text").toString() + "," +
+//                " \"user\": {" +
+//                " \"id_str\": " + user.get("id_str").toString() + "," +
+//                " \"followers_count\": " + user.get("followers_count").toString() + "} }";
 
         return new IndexRequest("twitter", "tweets",  tweetId)
-                .source(tweetText, XContentType.JSON);
+                .source(doc, XContentType.JSON);
     }
 
     public String getTweetId(String tweetJson){
